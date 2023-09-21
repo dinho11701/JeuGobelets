@@ -35,7 +35,10 @@ main = do
                                         , scoreTotal = 0
                                         })
 
-    let tableauJeu = [00,01,02,03]
+    let jeu = [ ["O3", "__", "__", "__"]
+                  , ["__", "__", "__", "__"]
+                  , ["__", "__", "__", "__"]
+                  , ["__", "__", "__", "__"] ]
 
     --putStrLn ("Est-ce que " ++ show (transformerPieceUserEnInt Zero0 `elem` tableauJeu))
     
