@@ -35,12 +35,12 @@ main = do
                                         , scoreTotal = 0
                                         })
 
-    let jeu = [ ["O3", "__", "__", "__"]
-                  , ["__", "__", "__", "__"]
-                  , ["__", "__", "__", "__"]
-                  , ["__", "__", "__", "__"] ]
+    let jeu = [ ["03", "", "__", "XX"]
+                  , ["02", "X3", "__", "__"]
+                  , ["01", "__", "__", "__"]
+                  , ["AllahOuakbar", "__", "__", "__"] ]
 
-    --putStrLn ("Est-ce que " ++ show (transformerPieceUserEnInt Zero0 `elem` tableauJeu))
+    --putStrLn ("Est-ce que " ++ show (transformerPieceUserEnInt Zero0 `elem` tableauJeu)
     
 
     -- Affichage des attributs de l'objet
@@ -54,5 +54,27 @@ main = do
 
     let new1 = formaterListeMov listeMovRest1
     let new2 = formaterListeMov listeMovRest2
-    
+
+    print jeu
     putStrLn (new1 ++ " || " ++ new2)
+
+    
+    -- Fonction récursive pour parcourir le tableau
+    -- Fonction récursive pour parcourir le tableau
+    let afficheCaseTableau [] _ = return ()
+        afficheCaseTableau (ligne:reste) ligneIndex = do
+            parcourirLigne ligne 0 ligneIndex
+            afficheCaseTableau reste (ligneIndex + 1)
+    
+        parcourirLigne [] _ _ = return ()
+        parcourirLigne (caseValue:cases) colonneIndex ligneIndex
+            | colonneIndex /= ligneIndex = do
+                let (i, j) = (colonneIndex, ligneIndex) -- Inverser i et j
+                putStrLn ("Case (" ++ show i ++ "," ++ show j ++ ") : " ++ caseValue)
+                parcourirLigne cases (colonneIndex + 1) ligneIndex
+            | otherwise = do
+                putStrLn ("Case (" ++ show ligneIndex ++ "," ++ show colonneIndex ++ ") : " ++ caseValue)
+                parcourirLigne cases (colonneIndex + 1) ligneIndex
+    
+    -- Appel initial de la fonction de parcours
+    afficheCaseTableau jeu 0
