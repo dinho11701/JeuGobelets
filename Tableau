@@ -88,6 +88,20 @@ afficheJeu1 num1 num2 hauteur1
       afficheJeu1 0 (num2 + 1) hauteur1
   | otherwise = return ()
 
+
+{-}
+parcourJeu :: [[String]] -> String -> Int -> Int -> Int -> Int -> Int -> [[String]]
+parcoursJeu jeu pieceAjoute num1 num2 num11 num22 hauteur1 = 
+  if num1 < 4 && hauteur1 < 4
+    then do
+     if num2 < 4 && hauteur1 < 4
+      putStrLn "case : " ++ num2 ++ ":" ++ num1
+      parcoursJeu jeu pieceAjoute (num1 + 1) num2 num11 num22 hauteur1
+  else
+    parcoursJeu jeu pieceAjoute num1 (num2 + 1) num11 num22 hauteur1
+      -}
+    
+
 modifierCaseJeu :: [[String]] -> String -> Int -> Int -> Int -> Int -> Int -> [[String]]
 modifierCaseJeu jeu pieceAjoute num1 num2 num11 num22 hauteur1
   | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
@@ -149,7 +163,7 @@ main = do
 
   print newStud
 
-  let nouveauJeu = modifierCaseJeu jeu "NouvelleValeur" 0 0 0 0 1
+  let nouveauJeu = modifierCaseJeu jeu "NouvelleValeur" 3 1 3 1 1
 
 
   print nouveauJeu
