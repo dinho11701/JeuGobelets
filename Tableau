@@ -1,30 +1,35 @@
 students :: [String]
-students = ["Alice","Bob","POto","Hasna","Oswald"]
+students = ["Alice", "Bob", "POto", "Hasna", "Oswald"]
 
 tableau :: [[String]]
-tableau = [ ["A", "B", "C","D"]
-          , ["E", "F", "G","H"]
-          , ["I", "J", "K","L"] ]
+tableau =
+  [ ["A", "B", "C", "D"],
+    ["E", "F", "G", "H"],
+    ["I", "J", "K", "L"]
+  ]
 
-jeu = [ ["A", "B", "C","D"]
-          , ["E", "F", "G","H"]
-          , ["I", "J", "K","L"] 
-          , ["M", "N", "O","P"] ]
+jeu =
+  [ ["A", "B", "C", "D"],
+    ["E", "F", "G", "H"],
+    ["I", "J", "K", "L"],
+    ["M", "N", "O", "P"]
+  ]
 
 taille :: Int
 taille = length students
 
 afficheStudents :: Int -> IO ()
 afficheStudents num = do
-    let student = students !! num
-    if num < taille
+  let student = students !! num
+  if num < taille
     then do
-        putStrLn student
-        afficheStudents (num + 1)
+      putStrLn student
+      afficheStudents (num + 1)
     else putStrLn "fini"
 
 taille1 :: Int
 taille1 = length tableau
+
 taille2 :: Int
 taille2 = 3 * taille1
 
@@ -34,11 +39,12 @@ incremente x = x + 1
 reinitialise :: Int -> Int
 reinitialise x = 0
 
-
 changerValeur :: String -> String -> String
 changerValeur x y = y
+
 longueur :: Int
 longueur = 4
+
 {-
 afficheJeu :: Int -> Int -> Int -> IO ()
 afficheJeu num1 num2 hauteur1 = do
@@ -68,30 +74,55 @@ afficheJeu num1 num2 hauteur1 = do
         afficheJeu 0 (num2 + 1) hauteur2
     else return ()  -- Fin de l'affichage-}
 
-
 haute :: Int
 haute = 1
 
-
 afficheJeu1 :: Int -> Int -> Int -> IO ()
 afficheJeu1 num1 num2 hauteur1
-    | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
-        let piece = jeu !! num2 !! num1
-        putStr piece
-        afficheJeu1 (num1 + 1) num2 hauteur1
-    | num2 < 4 && hauteur1 < 4 = do
-        putStrLn ""
-        afficheJeu1 0 (num2 + 1) hauteur1
-    | otherwise = return ()
+  | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
+      let piece = jeu !! num2 !! num1
+      putStr piece
+      afficheJeu1 (num1 + 1) num2 hauteur1
+  | num2 < 4 && hauteur1 < 4 = do
+      putStrLn ""
+      afficheJeu1 0 (num2 + 1) hauteur1
+  | otherwise = return ()
+
+modifierCaseJeu :: [[String]] -> String -> Int -> Int -> Int -> Int -> Int -> [[String]]
+modifierCaseJeu jeu pieceAjoute num1 num2 num11 num22 hauteur1
+  | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
+      let pieceAModif = jeu !! num2 !! num1
+      let ligneModifiee =
+            if num22 == num2 && num11 == num1
+              then let (avant, apres) = splitAt num22 (jeu !! num1)
+                   in avant ++ [pieceAjoute] ++ tail apres
+              else jeu !! num1 --modif ici
+      let jeuModifie = take num1 jeu ++ [ligneModifiee] ++ drop (num1 + 1) jeu
+      modifierCaseJeu jeuModifie pieceAjoute (num1 + 1) num2 num11 num22 hauteur1
+  | num2 < 4 && hauteur1 < 4 = do
+      --putStrLn ""
+      modifierCaseJeu jeu pieceAjoute num1 (num2 + 1) num11 num22 hauteur1
+  | otherwise = jeu -- Si aucune modification, retournez le tableau d'origine
 
 
+
+-----modif case tableau
+modifStudent :: [String] -> Int -> String -> [String]
+modifStudent liste pos new =
+  if pos >= 0 && pos < 5
+    then
+      let (avant, apres) = splitAt pos liste
+      in avant ++ [new] ++ tail apres
+    else
+      liste  -- Retourne la liste inchangée si la position est invalide
+-------------------
 
 
 
 {-
 hauteurJeu = 4
 hauteurDepart = 1
---fonction qui a besoin d'un string et la position 
+--fonction qui a besoin d'un string et la position
 updateTableau :: String -> Int -> Int -> Int -> IO()
 updateTableau chaine x0 y0 x1 y1  hauteur = do
     let piece = jeu !! x0 !! y0
@@ -101,13 +132,26 @@ updateTableau chaine x0 y0 x1 y1  hauteur = do
           then do
           let newPiece = jeu !! x1 !! y1
             changerValeur piece chaine
-    
--}
 
+-}
 
 main :: IO ()
 main = do
-    afficheStudents 0
-    putStrLn "Tableau :"
-    --afficheJeu 0 0 1
-    afficheJeu1 0 0 1
+  afficheStudents 0
+  putStrLn "Tableau :"
+  -- afficheJeu 0 0 1
+  afficheJeu1 0 0 1
+
+  --modifierCaseJeu "gogo" 0 0 0 0 1
+  --afficheJeu1 0 0 1
+
+  let newStud = modifStudent students 1 "mafemme"
+
+  print newStud
+
+  let nouveauJeu = modifierCaseJeu jeu "NouvelleValeur" 0 0 0 0 1
+
+
+  print nouveauJeu
+
+
