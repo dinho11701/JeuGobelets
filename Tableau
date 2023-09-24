@@ -33,11 +33,6 @@ taille1 = length tableau
 taille2 :: Int
 taille2 = 3 * taille1
 
-incremente :: Int -> Int
-incremente x = x + 1
-
-reinitialise :: Int -> Int
-reinitialise x = 0
 
 changerValeur :: String -> String -> String
 changerValeur x y = y
@@ -73,6 +68,16 @@ afficheJeu num1 num2 hauteur1 = do
         putStrLn ""  -- Passer à la ligne suivante
         afficheJeu 0 (num2 + 1) hauteur2
     else return ()  -- Fin de l'affichage-}
+
+
+incrementeJusqua :: Int -> Int -> Int
+incrementeJusqua x y = 
+  if x /= y
+    then do
+      incrementeJusqua (x + 1) y
+  else
+    x
+
 
 haute :: Int
 haute = 1
@@ -118,9 +123,66 @@ modifierCaseJeu jeu pieceAjoute num1 num2 num11 num22 hauteur1
       modifierCaseJeu jeu pieceAjoute num1 (num2 + 1) num11 num22 hauteur1
   | otherwise = jeu -- Si aucune modification, retournez le tableau d'origine
 
+{-
+modifierCaseJeu1 :: [[String]] -> String -> Int -> Int -> Int -> Int -> Int -> [[String]]
+modifierCaseJeu1 jeu pieceAjoute num1 num2 num11 num22 hauteur1
+  | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
+      let pieceAModif = jeu !! num2 !! num1
+      let ligneModifiee =
+            if num22 == num2 && num11 == num1
+              then let (avant, apres) = splitAt num22 (jeu !! num1)
+                   in avant ++ [pieceAjoute] ++ tail apres
+              else if num22 == num2
+                     then let x1 = incrementeJusqua num1 num11
+                          in modifierCaseJeu1 jeu pieceAjoute x1 num2 num11 num22 hauteur1
+                     else if num11 == num1
+                            then let x2 = incrementeJusqua num2 num22
+                                 in modifierCaseJeu1 jeu pieceAjoute num1 x2 num11 num22 hauteur1
+                            else jeu !! num1 --modif ici
+      let jeuModifie = take num1 jeu ++ [ligneModifiee] ++ drop (num1 + 1) jeu
+      modifierCaseJeu1 jeuModifie pieceAjoute (num1 + 1) num2 num11 num22 hauteur1
+  | num2 < 4 && hauteur1 < 4 = do
+      --putStrLn ""
+      modifierCaseJeu1 jeu pieceAjoute num1 (num2 + 1) num11 num22 hauteur1
+  | otherwise = jeu -- Si aucune modification, retournez le tableau d'origine
+-}
+{-
+modifierCaseJeu1 :: [[String]] -> String -> Int -> Int -> Int -> Int -> Int -> [[String]]
+modifierCaseJeu1 jeu pieceAjoute num1 num2 num11 num22 hauteur1
+  | num1 < 4 && num2 < 4 && hauteur1 < 4 = do
+      let pieceAModif = jeu !! num2 !! num1
+      let ligneModifiee =
+            if num22 == num2 && num11 == num1
+              then let (avant, apres) = splitAt num22 (jeu !! num1)
+                   in avant ++ [pieceAjoute] ++ tail apres
+              else if num22 == num2
+                     then let x1 = incrementeJusqua num1 num11
+                          in modifierCaseJeu1 jeu pieceAjoute x1 num2 num11 num22 hauteur1
+                     else if num11 == num1
+                            then let x2 = incrementeJusqua num2 num22
+                               in modifierCaseJeu1 jeu pieceAjoute num1 x2 num11 num22 hauteur1
+                            else jeu !! num1 --modif ici
+      let jeuModifie = take num1 jeu ++ [ligneModifiee] ++ drop (num1 + 1) jeu
+      modifierCaseJeu1 jeuModifie pieceAjoute (num1 + 1) num2 num11 num22 hauteur1
+  | num2 < 4 && hauteur1 < 4 = do
+      --putStrLn ""
+      modifierCaseJeu1 jeu pieceAjoute num1 (num2 + 1) num11 num22 hauteur1
+  | otherwise = jeu -- Si aucune modification, retournez le tableau d'origine
+-}
 
 
------modif case tableau
+--meilleur version , plus clean
+modifierCase2D :: [[a]] -> a -> Int -> Int -> [[a]]
+modifierCase2D tableau nouvelleValeur ligne colonne
+  | ligne < 0 || ligne >= length tableau || colonne < 0 || colonne >= length (tableau !! 0) = tableau
+  | otherwise =
+    let (avant, apres) = splitAt colonne (tableau !! ligne)
+    in take ligne tableau ++ [avant ++ [nouvelleValeur] ++ tail apres] ++ drop (ligne + 1) tableau
+
+
+
+
+-----modif case tableau 1D
 modifStudent :: [String] -> Int -> String -> [String]
 modifStudent liste pos new =
   if pos >= 0 && pos < 5
@@ -131,23 +193,6 @@ modifStudent liste pos new =
       liste  -- Retourne la liste inchangée si la position est invalide
 -------------------
 
-
-
-{-
-hauteurJeu = 4
-hauteurDepart = 1
---fonction qui a besoin d'un string et la position
-updateTableau :: String -> Int -> Int -> Int -> IO()
-updateTableau chaine x0 y0 x1 y1  hauteur = do
-    let piece = jeu !! x0 !! y0
-    if hauteurDepart <= hauteurJeu
-      then if x0/=j0
-        then if x0 == y1 && x1 == y0
-          then do
-          let newPiece = jeu !! x1 !! y1
-            changerValeur piece chaine
-
--}
 
 main :: IO ()
 main = do
@@ -163,9 +208,23 @@ main = do
 
   print newStud
 
-  let nouveauJeu = modifierCaseJeu jeu "NouvelleValeur" 3 1 3 1 1
+  --let nouveauJeu = modifierCaseJeu jeu "NouvelleValeur" 0 0 3 1 1
 
 
-  print nouveauJeu
+  --print nouveauJeu
+
+  let x = 2
+  let a = incrementeJusqua x 6
+
+  print a
+
+  let pieceAjoute = "X"
+
+  --let nouveauJeu = modifierCaseJeu1 jeu pieceAjoute 3 1 3 1 1
+
+  --inverse les cases du tableau , exemple je veux changer la case G pour R, G est a (2,1) en temps normal mais ds la logique du jeu, cest (1,2) donc on inverse
+  let p = modifierCase2D jeu "R" 3 3
+  
+  print p
 
 
