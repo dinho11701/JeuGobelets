@@ -28,3 +28,15 @@ formaterListeMov listes =
         formatListe liste = unwords liste
     in unwords [formatListe liste | liste <- listes]
 
+
+
+--fonction qui va recuperer reste de la liste
+prendResteListe :: [String] -> [String]
+prendResteListe [] = []
+prendResteListe(_:xs) =  xs 
+
+--fonction qui va retirer l'element de la tete de la liste
+retirerTeteListe :: [String] -> String
+retirerTeteListe [] = []
+retirerTeteListe(x:xs) = x 
+
