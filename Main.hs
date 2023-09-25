@@ -2,12 +2,12 @@ import Tableau
 import Move
 import Joueur
 import Control.Monad (forM_)
-
+import Data.IORef -- Importez Data.IORef pour utiliser IORef
 
 jeu1 =
-  [ ["X3", "__", "__", "__"],
-    ["03", "X2", "__", "__"],
-    ["__", "__", "X1", "__"],
+  [ ["X", "__", "__", "__"],
+    ["03", "X", "__", "__"],
+    ["__", "__", "X", "__"],
     ["__", "__", "__", "__"]
   ]
 
@@ -60,14 +60,32 @@ estVide :: [a] -> Bool
 estVide [] = True
 estVide _  = False
 
-parcourirTab2D :: [[String]] -> [Int] -> IO ()
-parcourirTab2D tab2D maListe = do
-  --let maListe = casesInterdites
-  let vide = estVide maListe
+
+
+
+parcourirTab2D1 :: [[String]] -> IO ()
+parcourirTab2D1 rows = do
+  let indexedRows = zip [0..] rows  -- Associer chaque ligne à son indice
+  mapM_ (\(i, row) -> parcourirLigne i row) indexedRows
+
+parcourirLigne :: Int -> [String] -> IO ()
+parcourirLigne rowIndex cells = do
+  let indexedCells = zip [0..] cells  -- Associer chaque cellule à son indice
+  mapM_ (\(colIndex, cell) -> putStrLn $ "Case (" ++ show(rowIndex) ++ ", " ++ show(colIndex) ++ "): " ++ cell) indexedCells
+
+
+
+
+
+parcourirTab2D :: [[String]] -> IORef [Int] -> IO ()
+parcourirTab2D tab2D listeRef = do
+  -- Lisez la liste depuis la référence
+  liste2 <- readIORef listeRef
+  let vide = estVide liste2
 
   forM_ [0..(length tab2D - 1)] $ \i -> do
     forM_ [0..(length (tab2D !! 0) - 1)] $ \j -> do
-      if not vide
+      {-if not vide
         then do
           let elem1 = (tab2D !! (maListe !! 0) !! (maListe !! 1))
           let elem2 = (tab2D !! (maListe !! 2) !! (maListe !! 3))
@@ -76,7 +94,7 @@ parcourirTab2D tab2D maListe = do
               putStrLn "YEEES INTERDIT"
           else putStrLn "YEEES INTERDIT"
       else putStrLn "vide"
-    
+    -}
       let element = tab2D !! i !! j
       putStrLn $ "Élément à la position (" ++ show j ++ ", " ++ show i ++ ") : " ++ show element
       
@@ -103,12 +121,14 @@ parcourirTab2D tab2D maListe = do
                         then putStrLn "Alignement2"
                         else do
                           putStrLn "Alignement3"
-                          let maListe = [casse22 !! 0, casse22 !! 1, j + 1, i + 1]
+                           -- Mettez à jour la liste globale
+                          writeIORef listeRef [casse22 !! 0, casse22 !! 1, j + 1, i + 1]
+                          listeMiseAJour <- readIORef listeRef
                           putStrLn $ "Valeur de num' mise à jour : " ++ show num''
-                          print maListe
-                          print (tab2D !! (maListe !! 0) !! (maListe !! 1))
-                          print (tab2D !! (maListe !! 2) !! (maListe !! 3))
-                          parcourirTab2D tab2D maListe
+                          print listeMiseAJour
+                          print (tab2D !! (listeMiseAJour !! 0) !! (listeMiseAJour !! 1))
+                          print (tab2D !! (listeMiseAJour !! 2) !! (listeMiseAJour !! 3))
+ 
               else if casse1 /= [-1, -1]
                 then do 
                   let num'' = incrementeNumPieceJoueur num'
@@ -126,6 +146,7 @@ parcourirTab2D tab2D maListe = do
                 else putStrLn "Alignement3"
             else putStrLn "gogo"
         else putStrLn "Non"
+            
 
 -- Exemple d'utilisation
 main :: IO ()
@@ -138,8 +159,14 @@ main = do
 
   let estUser = estUnUser "0"
   putStrLn (show estUser)
+  
+  listeRef <- newIORef []
 
-  parcourirTab2D jeu1 list1
+  --parcourirTab2D jeu1 listeRef 
+  --print listeRef
+  
+  parcourirTab2D1 jeu1
+  
   
   
   
