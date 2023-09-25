@@ -7,7 +7,7 @@ import Control.Monad (forM_)
 jeu1 =
   [ ["X3", "__", "__", "__"],
     ["03", "X2", "__", "__"],
-    ["__", "__", "__", "__"],
+    ["__", "__", "X1", "__"],
     ["__", "__", "__", "__"]
   ]
 
@@ -59,7 +59,7 @@ parcourirTab2D tab2D = do
       let user = estUnUser element
       let num = 0
       print user
-
+{-
       if user
         then do
           --casdroite
@@ -109,8 +109,8 @@ parcourirTab2D tab2D = do
                       else putStrLn "Alignement3"
               else putStrLn "gogo"
         else putStrLn "f"
+-}
 
-{- 
       if user
         then do
           let num' = incrementeNumPieceJoueur num  -- Mise à jour de num
@@ -121,17 +121,35 @@ parcourirTab2D tab2D = do
               if casse1 !! 0 == -1
                 then do
                   let casse2 = faireCasDiag tab2D element j i  -- Correction de la fonction appelée
+                  --let val1 = True
                   if casse2 !! 0 == -1
                     then putStrLn "Rien à proximité"
-                    else do
-                      let num'' = incrementeNumPieceJoueur num'  -- Incrémentation de num
-                      putStrLn $ "L'utilisateur a la case (" ++ show j ++ ", " ++ show i ++ ") : " ++ show element
-                      putStrLn $ "Valeur de num' mise à jour : " ++ show num''
+                  else do
+                    let num'' = incrementeNumPieceJoueur num'  -- Incrémentation de num
+                    let casse22 = faireCasDiag tab2D element (j + 1) (i + 1)
+                    if casse22 !! 0 == -1
+                      then putStrLn "Alignement2"
+                      else putStrLn "Alignement3"
+                    putStrLn $ "Valeur de num' mise à jour : " ++ show num''
 
-              else putStrLn $ "L'utilisateur a la case (" ++ show j ++ ", " ++ show i ++ ") : " ++ show element
-            else putStrLn $ "L'utilisateur a la case (" ++ show j ++ ", " ++ show i ++ ") : " ++ show element
-        else putStrLn "Non"
--}
+              else if casse1 /= [-1, -1]
+              then do 
+                let num'' = incrementeNumPieceJoueur num'
+                let casse11 = faireCasBas tab2D element j (i + 1)
+                if casse11 !! 0 == -1
+                  then putStrLn "Alignement2"
+                  else putStrLn "Alignement3"
+              else putStrLn "chaud"
+          else if casse /= [-1, -1]
+              then do
+                let num'' = incrementeNumPieceJoueur num'
+                let casse11 = faireCasBas tab2D element (j + 1) i
+                if casse11 !! 0 == -1
+                  then putStrLn "Alignement2"
+                  else putStrLn "Alignement3"
+              else putStrLn "gogo"
+      else putStrLn "Non"
+
 
 -- Exemple d'utilisation
 main :: IO ()
