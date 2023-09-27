@@ -1,26 +1,45 @@
-calculerAlignements2 :: [Int] -> Int
-calculerAlignements2 [] = 0
-calculerAlignements2 [_] = 0
-calculerAlignements2 [_, _] = 0
-calculerAlignements2 (x1 : x2 : xs) =
-  if estAligne x1 x2
-    then 1 + calculerAlignements2 (x2 : xs)
-    else calculerAlignements2 (x2 : xs)
+calculerAlignements :: [Int] -> Int
+calculerAlignements [] = 0
+calculerAlignements [_] = 0
+calculerAlignements [_, _] = 0
+calculerAlignements [_, _, _] = 0
+calculerAlignements (x1 : y1 : x2 : y2 : xs) =
+  if estUneLigne x1 y1 x2 y2
+    then 1 + calculerAlignements (x1 : y1 : xs)
+  else calculerAlignements (x1 : y1 : xs)
+    
 
-estAligne :: Int -> Int -> Bool
-estAligne x1 x2 = estAligneX x1 x2 || estAligneY x1 x2
 
-estAligneX :: Int -> Int -> Bool
-estAligneX x1 x2 = abs (x1 `mod` 4 - x2 `mod` 4) == 1
 
-estAligneY :: Int -> Int -> Bool
-estAligneY x1 x2 = abs (x1 `div` 4 - x2 `div` 4) == 1
 
+
+estUneLigne :: Int -> Int -> Int -> Int -> Bool
+estUneLigne x1 y1 x2 y2 =
+  (estUneLigneXDroite x1 x2 && estUneLigneYDroite y1 y2)
+    || (estUneLigneXBas x1 x2 && estUneLigneYBas y1 y2)
+    || (estUneLigneDiagonale x1 x2 y1 y2)
+
+estUneLigneXDroite :: Int -> Int -> Bool
+estUneLigneXDroite x1 x2 = x1 + 1 == x2
+
+estUneLigneYDroite :: Int -> Int -> Bool
+estUneLigneYDroite y1 y2 = y2 == y1
+
+estUneLigneXBas :: Int -> Int -> Bool
+estUneLigneXBas x1 x2 = x1 == x2
+
+estUneLigneYBas :: Int -> Int -> Bool
+estUneLigneYBas y1 y2 = y1 + 1 == y2
+
+estUneLigneDiagonale :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDiagonale x1 x2 y1 y2 = x1 + 1 == x2 && y1 + 1 == y2
 
 main :: IO ()
 main = do
-  let tableau = [0, 0, 2,2,2, 0, 1, 1, 2, 3,0,2,0,3]  -- Remplacez par votre propre tableau d'entiers
+  let tableau = [0,0, 1,1, 0,1 ,0,2 ,0,3]  -- Remplacez par votre propre tableau d'entiers
+  
+  let tab = [0,0,1,1,1,0]  
 
-  let alignements2 = calculerAlignements2 tableau
+  let alignements = calculerAlignements tab
 
-  putStrLn $ "Nombre d'alignements de 2 points : " ++ show alignements2
+  putStrLn $ "Nombre d'alignements : " ++ show alignements
