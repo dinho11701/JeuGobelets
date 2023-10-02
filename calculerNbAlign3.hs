@@ -14,31 +14,59 @@ retirerSes2Elements :: [Int] -> [Int]
 retirerSes2Elements [_] = error "liste vide"
 retirerSes2Elements (_:_:xs) = xs
 
-{--
+
+afficheCount :: [Int] -> IO ()
+afficheCount xy = print xy
+
 compte :: [Int] -> Int
 compte [] = 0
 compte liste = do
     let x1y1 = recuperer2Elements liste
     let reste = retirerSes2Elements liste
-    comptePourChacun x1y1 liste + compte reste
+    afficheCount x1y1
+    afficheCount reste
+    comptePourChacun x1y1 liste 0 + compte reste
+    
+    --tester manuellement pour voir le comportement 
 
-
-comptePourChacun :: [Int] -> [Int] -> Int
-comptePourChacun listxy listeComplete = do
-
+comptePourChacun :: [Int] -> [Int] -> Int -> Int
+comptePourChacun listxy listeComplete currentCount = do
     let x2y2 = recuperer2Elements listeComplete
     let x2 = head listeComplete 
-    let y2 = tail listeComplete
+    let y2 = listeComplete !! 1
     let updateListe = retirerSes2Elements listeComplete
     
     let x1 = head listxy
-    let y1 = tail listxy
+    let y1 = listxy !! 1
     
-    if estUneLigne x1 y1 x2 y2
+    if length updateListe == 0
+        then currentCount
+    else do
+        let listex3y3 = recuperer2Elements updateListe
+        if estUneLigne x1 y1 x2 y2
+            then do 
+                let listex3y3 = recuperer2Elements updateListe
+                let x3 = head listex3y3
+                let y3 = listex3y3 !! 1
+                let updateListe1 = retirerSes2Elements updateListe
+                
+                if estUneLigne x2 y2 x3 y3
+                    then do
+                        if estUneLigneComplete x1 y1 x3 y3
+                            then comptePourChacun listxy updateListe1 (currentCount + 1)
+                            else comptePourChacun listxy updateListe1 currentCount
+                    else comptePourChacun listxy updateListe1 currentCount
+            else comptePourChacun listxy updateListe currentCount
+
+        --putStrLn$ "pour x1 y1 = " ++ show x1 ++ " : " ++ show y1
+        --print updateListe
+    
+    
+    {--if estUneLigne x1 y1 x2 y2
         then do 
             let listex3y3 = recuperer2Elements updateListe
             let x3 = head listex3y3
-            let y3 = tail listex3y3 
+            let y3 = listex3y3 !! 1
             let updateListe1 = retirerSes2Elements updateListe
             
             if estUneLigne x2 y2 x3 y3
@@ -47,9 +75,9 @@ comptePourChacun listxy listeComplete = do
                         then 1 + comptePourChacun listxy updateListe1
                     else comptePourChacun listxy updateListe1
             else comptePourChacun listxy updateListe1
-    else comptePourChacun listxy updateListe
-    
+    else comptePourChacun listxy updateListe--}
     --}
+    
 
 
 
@@ -108,15 +136,18 @@ main = do
     
     let testAlign = [0,0,1,1,2,2,1,0,0,3,2,0]
     
-    --let count = compte testAlign
-    --print count
+    let count = compte testAlign
+    print count
     
-    let xy = [0,1]
+    {--let xy = [0,1]
     let x = head xy
     let y = tail xy--ici ca retorune une liste, et non un element
+    let yy = xy !! 1
     
     print x
-    print y
+    print yy--}
+    
+    --comptePourChacun [0,0] testAlign
     
     
     
