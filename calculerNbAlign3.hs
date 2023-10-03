@@ -1,309 +1,3 @@
-
-retirerTeteListe :: [Int] -> [Int]
-retirerTeteListe [] = []
-retirerTeteListe (x:xs) = xs
-
-
-recuperer2Elements :: [Int] -> [Int]
-recuperer2Elements [] = error "vide"
-recuperer2Elements [x,y,_] = [x,y]
-recuperer2Elements (x:xs) = [x,head xs]
-
-
-
-retirerSes2Elements :: [Int] -> [Int]
-retirerSes2Elements [_] = error "liste vide"
---retirerSes2Elements [x,y] = [x,y]
-retirerSes2Elements (_:_:xs) = xs
-
-
-afficheCount :: [Int] -> IO ()
-afficheCount xy = print xy
-
-
-{--compte :: [Int] -> [Int] -> [Int]
-compte [] listeCompteur = listeCompteur
-compte liste listeCompteur = 
-    let x1y1 = recuperer2Elements liste
-        reste = retirerSes2Elements liste
-        nb = comptePourChacun x1y1 reste 0
-        new = ajouteValeurInListe listeCompteur nb
-    in new
---}
-
-{--  
-compte2 :: [Int] -> [Int] -> IO()
-compte2 [] listeCompteur = listeCompteur
-compte2 liste listeCompteur = 
-    let x1y1 = recuperer2Elements liste
-        --reste = retirerSes2Elements liste
-        putStrLn "---------------"
-        putStrLn "les x1 y1:"
-        let x1 = head x1y1
-        let y1 = x1y1 !! 1
-        print x1
-        print y1 
-        nb = comptePourChacun x1y1 reste 0
-        print nb
-        new = ajouteValeurInListe listeCompteur nb
-        reste = retirerSes2Elements liste
-    in compte reste new
-    --}
-    
-
-{--    
-compte1 :: [Int] -> [Int] -> IO()
-compte1 [] listeCompteur = do
-    putStrLn "Résultat final :"
-    print listeCompteur
-compte1 liste listeCompteur = do
-    let x1y1 = recuperer2Elements liste
-    let x1 = head x1y1
-    let y1 = x1y1 !! 1
-    putStrLn "---------------"
-    putStrLn "Les x1 y1 :"
-    print x1
-    print y1
-    let reste = retirerSes2Elements liste
-    putStrLn "---------------"
-    putStrLn "Le reste :"
-    print reste
-    let nb = comptePourChacun x1y1 liste 0
-    putStrLn "---------------"
-    putStrLn "Nombre calculé :"
-    print nb
-    let new = ajouteValeurInListe listeCompteur nb
-    putStrLn "---------------"
-    putStrLn "Nouvelle liste compteur :"
-    print new
-    compte1 reste new
-
---}
-  {--  let x2y2 = recuperer2Elements reste
-        reste1 = retirerSes2Elements reste
-        nb1 = comptePourChacun x1y1 reste1 0
-        new1 = ajouteValeurInListe new1 nb
-    in new1--}
-
-    --tester manuellement pour voir le comportement 
-    
-    
-retireEtRecupeX2Y2 :: [Int] -> [Int] -> Int
-retireEtRecupeX2Y2 listex1y1 reste =
-    let x1 = listex1y1 !! 0
-        y1 = listex1y1 !! 1
-    in
-    if length reste /= 0
-        then let x2y2 = recuperer2Elements reste
-                 x2 = x2y2 !! 0
-                 y2 = x2y2 !! 1
-             in
-             if estUneLigne x1 y1 x2 y2 && (length (retirerSes2Elements reste) == 0 || length (retirerSes2Elements reste) /= 0)
-                 then 1
-                 else if length reste /= 0
-                     then retireEtRecupeX2Y2 listex1y1 (retirerSes2Elements reste)
-                     else -1
-        else -1
-
-    
-retireEtRecupeX3Y3 :: [Int] -> [Int] -> Int
-retireEtRecupeX3Y3 listex1y1x2y2 reste = do
-    let x1 = listex1y1x2y2 !! 0
-    let y1 = listex1y1x2y2 !! 1
-    let x2 = listex1y1x2y2 !! 2
-    let y2 = listex1y1x2y2 !! 3
-    
-    if length reste == 2
-        then do
-            let x3y3 = recuperer2Elements reste
-            if estUneLigne x1 y1 x2 y2 && estUneLigne x2 y2 (x3y3 !! 0) (x3y3 !! 1) && estUneLigneComplete x1 y1 (x3y3 !! 0) (x3y3 !! 1)
-                then 1
-            else -1
-            
-    else do
-        let x3y3 = recuperer2Elements reste
-        let newReste = retirerSes2Elements reste
-    
-        let x3y3 = recuperer2Elements reste
-        let x3 = x3y3 !! 0
-        let y3 = x3y3 !! 1
-        let newReste = retirerSes2Elements reste
-        
-        if estUneLigne x1 y1 x2 y2 && estUneLigne x2 y2 x3 y3 && estUneLigneComplete x1 y1 x3 y3 && (length newReste == 0 || length newReste == 2)
-            then 1
-        else if length newReste /= 0
-            then retireEtRecupeX3Y3 listex1y1x2y2 newReste
-        else -1
-
-{--le bon compte
-compte :: [Int] -> [Int] -> [Int]
-compte [] listeCompteur = listeCompteur
-compte liste listeCompteur = 
-    let x1y1 = recuperer2Elements liste
-        nb = comptePourChacun x1y1 liste 0
-        new = ajouteValeurInListe listeCompteur nb
-    in compte (retirerSes2Elements liste) new
---}
-
-
-comptePourChacun :: [Int] -> [Int] -> Int -> IO ()
---comptePourChacun _ [] count = count
-comptePourChacun listxy listeComplete count = do
-
-    let x1 = head listxy
-    let y1 = listxy !! 1
-    
-    {--let x2y2 = recuperer2Elements listeComplete
-    let x2 = head listeComplete 
-    let y2 = listeComplete !! 1
-    let updateListe = retirerSes2Elements listeComplete--}
-    
-    let (x2y2, x2, y2, updateListe) = if length listxy == 4
-            then (recuperer2Elements listeComplete, listxy !! 2, listxy !! 3, listeComplete)
-            else (recuperer2Elements listeComplete, head listeComplete, listeComplete !! 1, retirerSes2Elements listeComplete)
-            
-    print updateListe
-
-    putStrLn "Les x1 y1:"
-    
-    print x1
-    print y1
-    
-    putStrLn "Les x2 y2:"
-    
-    print x2
-    print y2
-    
-    
-    if length updateListe == 2 || length updateListe == 0
-        then do--count
-            print updateListe
-            putStrLn "fin ici :"
-            print count
-    else do
-
-        let listex3y3 = recuperer2Elements updateListe
-        let updateListe1 = retirerSes2Elements updateListe
-        let x3 = head listex3y3 
-        let y3 = listex3y3 !! 1
-        
-        if estUneLigne x1 y1 x2 y2 && estUneLigne x2 y2 x3 y3 && estUneLigneComplete x1 y1 x3 y3
-            then do
-                putStrLn "Les x3 y3:"
-                print x3
-                print y3
-                putStrLn "valeur ici :"
-                print (count + 1)
-    
-                comptePourChacun listxy updateListe1 (count + 1)
-        else if estUneLigne x1 y1 x2 y2 && estUneLigne x2 y2 x3 y3 == False
-            then do
-                let retour = retireEtRecupeX3Y3 [x1,y1,x2,y2] updateListe1
-                if retour == 1
-                    then do comptePourChacun listxy updateListe1 (count + 1)
-                else comptePourChacun listxy updateListe1 count
-        else if estUneLigne x1 y1 x2 y2 == False
-            then do 
-                print updateListe1
-                let retour = retireEtRecupeX2Y2 [x1,y1] updateListe1
-                if retour == 1
-                    then do 
-                        putStrLn "valeur ici poto:"
-                        print count 
-                        comptePourChacun [x1,y1,x2,y2] updateListe1 count
-                else do
-                    putStrLn "cest toiii heiin"
-                    
-                    putStrLn "yoooLes x1 y1:"
-    
-                    print x1
-                    print y1
-                    
-                    putStrLn "yoooLes x2 y2:"
-                    
-                    print x2
-                    print y2
-                    
-                    print updateListe1
-                    comptePourChacun listxy updateListe1 count
-        else if estUneLigne x1 y1 x2 y2 == True 
-            then do
-                putStrLn "LAAAA"
-                print updateListe1
-                comptePourChacun listxy updateListe1 count
-        else comptePourChacun listxy updateListe1 count
-        {--
-        else if estUneLigne x1 y1 x2 y2 == False && estUneLigne x2 y2 x3 y3 == False && estUneLigneComplete x1 y1 x3 y3 == False
-            then comptePourChacun listxy updateListe1 count
-        
-        else if estUneLigne x1 y1 x2 y2 == False && estUneLigne x2 y2 x3 y3 == False && estUneLigneComplete x1 y1 x3 y3 == False
-        
-        else if estUneLigne x2 y2 x3 y3 == False 
-        
-        else if estUneLigneComplete x1 y1 x3 y3 == False
-    
-    ------------------------------------------------------------------------------------
-    
-        if estUneLigne x1 y1 x2 y2
-            then do
-                let listex3y3 = recuperer2Elements updateListe
-                let updateListe1 = retirerSes2Elements updateListe
-                comptePourChacun listxy updateListe1 count
-        else if estUneLigne x1 y1 x2 y2 == False
-            then do 
-                let listex3y3 = recuperer2Elements updateListe
-                let updateListe1 = retirerSes2Elements updateListe
-                comptePourChacun listxy updateListe1 count
-        else if estUneLigne x1 y1 x2 y2 && estUneLigne x2 y2 x3 y3
-            then do
-                let listex3y3 = recuperer2Elements updateListe
-                let updateListe1 = retirerSes2Elements updateListe
-                if estUneLigneComplete x1 y1 x3 y3
-                    then comptePourChacun listxy updateListe1 (count + 1)
-                else comptePourChacun listxy updateListe1 count
-    ------------------------------------------------------------------------------------------
-    
-        let listex3y3 = recuperer2Elements updateListe
-        if estUneLigne x1 y1 x2 y2
-            then do 
-                --let listex3y3 = recuperer2Elements updateListe
-                let x3 = head listex3y3
-                let y3 = listex3y3 !! 1
-                let updateListe1 = retirerSes2Elements updateListe
-                
-                if estUneLigne x2 y2 x3 y3
-                    then do
-                        if estUneLigneComplete x1 y1 x3 y3
-                            then do
-                                --putStrLn "count :-----------"
-                                --print (count + 1) 
-                                comptePourChacun listxy updateListe1 (count + 1)
-                        else comptePourChacun listxy updateListe1 count
-                else comptePourChacun listxy updateListe1 count
-        else comptePourChacun listxy updateListe count
-
-        --putStrLn$ "pour x1 y1 = " ++ show x1 ++ " : " ++ show y1
-        --print updateListe
-    
-    
-    {--if estUneLigne x1 y1 x2 y2
-        then do 
-            let listex3y3 = recuperer2Elements updateListe
-            let x3 = head listex3y3
-            let y3 = listex3y3 !! 1
-            let updateListe1 = retirerSes2Elements updateListe
-            
-            if estUneLigne x2 y2 x3 y3
-                then do
-                    if estUneLigneComplete x1 y1 x3 y3
-                        then 1 + comptePourChacun listxy updateListe1
-                    else comptePourChacun listxy updateListe1
-            else comptePourChacun listxy updateListe1
-    else comptePourChacun listxy updateListe--}
-    --}
-    
-
-
 estUneLigneComplete :: Int -> Int -> Int -> Int -> Bool
 estUneLigneComplete x1 y1 x2 y2 = estUneLigneCompleteDiag x1 y1 x2 y2 || estUneLigneCompleteDroite x1 y1 x2 y2
     || estUneLigneCompleteBas x1 y1 x2 y2
@@ -345,47 +39,214 @@ estUneLigneDiagonale x1 x2 y1 y2 = x1 + 1 == x2 && y1 + 1 == y2
 ajouteValeurInListe :: [Int] -> Int -> [Int]
 ajouteValeurInListe liste nb = nb : liste
 
+obtenirDeuxSuivants :: Eq a => [a] -> a -> a -> Maybe (a, a)
+obtenirDeuxSuivants [] _ _ = Nothing
+obtenirDeuxSuivants [_] _ _ = Nothing
+obtenirDeuxSuivants [_, _] _ _ = Nothing
+obtenirDeuxSuivants (x:y:rest) elem1 elem2
+    | x == elem1 && y == elem2 = case rest of
+        (a:b:_) -> Just (a, b)
+        _ -> Nothing
+    | otherwise = obtenirDeuxSuivants (y:rest) elem1 elem2
 
+
+trouverDebutLigne :: [Int] -> [Int] -> [Int] -> [Int]
+trouverDebutLigne listex1y1 listex2y2 listeComplete =
+    if length listex1y1 == 0
+        then [-1]
+    else
+        let x2 = listex2y2 !! 0
+            y2 = listex2y2 !! 1
+        in
+        let maybeX2Y2 = obtenirDeuxSuivants listeComplete x2 y2
+        in
+        case maybeX2Y2 of
+            Nothing -> [-1]
+            Just (x2', y2') ->
+                let x1 = listex1y1 !! 0
+                    y1 = listex1y1 !! 1
+                in
+                if estUneLigne x1 y1 x2' y2' 
+                    then [x1, y1, y2', x2']
+                else 
+                    trouverDebutLigne listex1y1 (x2':y2':[]) listeComplete
+
+
+trouverFinLigne :: [Int] -> [Int] -> [Int] -> [Int]
+trouverFinLigne listex1y1x2y2 x3y3 listeComplete =
+    
+    if length listex1y1x2y2 == 0
+        then [-1]
+    else 
+        let x1 = listex1y1x2y2 !! 0
+            y1 = listex1y1x2y2 !! 1
+            x2 = listex1y1x2y2 !! 2
+            y2 = listex1y1x2y2 !! 3
+        in
+        if length x3y3 == 0
+            then [-1]
+        else
+            let x3 = x3y3 !! 0
+                y3 = x3y3 !! 1
+            in
+            if estUneLigne x2 y2 x3 y3 && estUneLigneComplete x1 y1 x3 y3
+                then [x1, y1, x2, y2, x3, y3]
+            else
+                let maybeX3Y3 = obtenirDeuxSuivants listeComplete x3 y3
+                in
+                case maybeX3Y3 of
+                    Nothing -> [-1]
+                    Just (x3', y3') -> trouverFinLigne listex1y1x2y2 (x3' : y3' : []) listeComplete
+
+
+
+comptePourChacun1 :: [Int] -> [Int] -> [Int] -> [Int]
+comptePourChacun1 listexy listeComplete listeCompteur =
+
+    let x1 = listexy !! 0
+        y1 = listexy !! 1
+        --putStrLn "x1 y1"
+        --print x1
+        --print y1
+    in
+    let x2y2 = obtenirDeuxSuivants listeComplete x1 y1
+    --putStrLn "liste x2y2"
+    --print x2y2
+    in
+    case x2y2 of
+        Nothing -> [-1]
+        Just (x2, y2) ->
+            let pairex1y1x2y2 = trouverDebutLigne [x1, y1] [x2, y2] listeComplete
+            --putStrLn "x1y1x2y2"
+            --print pairex1y1x2y2
+            in
+            case length pairex1y1x2y2 of
+                1 -> ajouteValeurInListe listeCompteur 0
+                _ ->
+                    let x3y3 = obtenirDeuxSuivants listeComplete x1 y1
+                    --putStrLn "liste x3y3"
+                    --print x3y3
+                    in
+                    let pairex1y1x2y2x3y3 =
+                            case x3y3 of
+                                Just (x3, y3) -> trouverFinLigne pairex1y1x2y2 [x3, y3] listeComplete
+                                Nothing -> [-1]
+                    in
+                    case length pairex1y1x2y2x3y3 of
+                        1 -> ajouteValeurInListe listeCompteur 0
+                        _ -> ajouteValeurInListe listeCompteur 1
+
+
+comptePourChacun :: [Int] -> [Int] -> [Int] -> IO ()
+comptePourChacun listexy listeComplete listeCompteur = do
+    let x1 = listexy !! 0
+        y1 = listexy !! 1
+    {--putStrLn "Listexy:"
+    print listexy
+    putStrLn "x1 y1:"
+    print x1
+    print y1--}
+
+    let x2y2 = obtenirDeuxSuivants listeComplete x1 y1
+    --putStrLn "x2y2:"
+    --print x2y2
+
+    case x2y2 of
+        Nothing -> do
+            putStrLn "x2y2 est Nothing"
+            -- Vous pouvez effectuer d'autres opérations IO ici si nécessaire
+        Just (x2, y2) -> do
+            putStrLn "x2y2 est Just"
+            putStrLn "x2 y2:"
+            print x2
+            print y2
+
+            let pairex1y1x2y2 = trouverDebutLigne [x1, y1] [x2, y2] listeComplete
+            putStrLn "Paire x1y1x2y2:"
+            print pairex1y1x2y2
+
+            case length pairex1y1x2y2 of
+                1 -> do
+                    putStrLn "Longueur de la pairex1y1x2y2 est 1"
+                _ -> do
+                    putStrLn "Longueur de la pairex1y1x2y2 n'est pas 1"
+                    let x3y3 = obtenirDeuxSuivants listeComplete x1 y1
+                    putStrLn "x3y3:"
+                    print x3y3
+
+                    case x3y3 of
+                        Just (x3, y3) -> do
+                            putStrLn "x3y3 est Just"
+                            putStrLn "x3y3:"
+                            print x3y3
+                            let pairex1y1x2y2x3y3 = trouverFinLigne pairex1y1x2y2 [x3, y3] listeComplete
+                            putStrLn "pairex1y1x2y2 ici"
+                            print pairex1y1x2y2
+                            putStrLn "Paire x1y1x2y2x3y3:"
+                            print pairex1y1x2y2x3y3
+
+                            case length pairex1y1x2y2x3y3 of
+                                1 -> do
+                                    putStrLn "Longueur de la pairex1y1x2y2x3y3 est 1"
+                                _ -> do
+                                    putStrLn "Longueur de la pairex1y1x2y2x3y3 n'est pas 1"
+
+                        Nothing -> do
+                            putStrLn "x3y3 est Nothing"
+                            -- Vous pouvez effectuer d'autres opérations IO ici si nécessaire
+
+
+
+
+
+main :: IO ()
 main = do
-    putStrLn "Hello World"
-    let test = [1,2,3,4,5]
     
-    let new = recuperer2Elements test
-    print new 
-    print test
+-- Exemple d'utilisation :
+    let liste = [1, 2, 3, 4, 5, 6]
     
-    let update = retirerSes2Elements test
-    print update
+    let test = [0,0,3,0,5,0,1,1]
     
-    let testAlign = [1,1,2,2,1,0,0,3,2,0,0,1,0,2]
+    case obtenirDeuxSuivants liste 5 6 of
+        Just (a, b) -> putStrLn $ "Les deux éléments suivants sont : " ++ show a ++ " et " ++ show b
+        Nothing -> putStrLn "Les éléments spécifiés ne se suivent pas dans la liste."
+        
     
-    let testAlign1 = [3,3,2,2]
-    
-    putStrLn "-----------------------"
-    
-    --let count = compte testAlign
-    --print count
-    
-    let listee = []
-    
-    --let new = ajouteValeurInListe listee 4
-    --print new
-    
-    --let new1 = compte testAlign listee
-    --print new1
-    
-    --let new2 = compte testAlign1 listee
-    ---print new2
-    
-    --let n = retireEtRecupeX2Y2 [5,5] testAlign1
+        
+    --let n = comptePourChacun [0,0] [] 0
     --print n
     
-    comptePourChacun [0,0] testAlign 0
+    {--let paire = trouverDebutLigne [0,0] [3,0] test
+    print paire
     
-    let nb = retireEtRecupeX3Y3 [0,0,1,1] [2,2]
-    print nb
+    let test1 = [0,0,0,1,1,0,2,2,0,2]
+    
+    let triplet = trouverFinLigne [0,0,1,1] [0,1] test1
+    print triplet
+    
+    let count = comptePourChacun [0,0] test1 []
+    print count--}
+    
+    let test1 = [0,0,0,1,1,0,2,2,0,2]
+    
+    let test2 = [0,0,4,4,1,1,7,7,2,2]
+    
+    --let triplet = trouverFinLigne [0,0,1,1] [0,1] test1
+    --print triplet
+    
+    --let tt = (triplet !! 2)
+    --print tt
+    
+    comptePourChacun [0,0] test1 [1]
+    
+    let count = comptePourChacun1 [1,1] test2 []
+    print count
+    
+    
+    
     
 
+    
     
     
     
