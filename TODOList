@@ -1,0 +1,5 @@
+Tâches:
+  -Pour l'instant ,la fonction onboard est faite aec succes, elle va déplacer la piece d'une position à une autre et mettre un "-" à la position x1 y1. Mais eventuellement il faudra que ca laisse l'ancienne piece présente
+  s'il y avait une piece en dessous ou sinon remettre le "-"
+
+  -Faire la fonction drop
