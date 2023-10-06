@@ -1,0 +1,167 @@
+estUneLigneComplete :: Int -> Int -> Int -> Int -> Bool
+estUneLigneComplete x1 y1 x2 y2 = estUneLigneCompleteDiag x1 y1 x2 y2 || estUneLigneCompleteDroite x1 y1 x2 y2
+    || estUneLigneCompleteBas x1 y1 x2 y2
+    
+estUneLigneCompleteDiag :: Int -> Int -> Int -> Int -> Bool
+estUneLigneCompleteDiag x1 y1 x2 y2 = x2 - x1 == 2 && y2 - y1 == 2
+
+estUneLigneCompleteDroite :: Int -> Int -> Int -> Int -> Bool
+estUneLigneCompleteDroite x1 y1 x2 y2 = x2 - x1 == 2 && y2 - y1 == 0
+
+estUneLigneCompleteBas :: Int -> Int -> Int -> Int -> Bool
+estUneLigneCompleteBas x1 y1 x2 y2 = x2 - x1 == 0 && y2 - y1 == 2
+
+estUneLigne :: Int -> Int -> Int -> Int -> Bool
+estUneLigne x1 y1 x2 y2 =
+  (estUneLigneXDroite x1 x2 && estUneLigneYDroite y1 y2)
+    || (estUneLigneXBas x1 x2 && estUneLigneYBas y1 y2)
+    || (estUneLigneDiagonale x1 x2 y1 y2) || (estUneLigneXDroite x1 x2 && estUneLigneYDroite y1 y2)
+    && (estUneLigneXBas x1 x2 && estUneLigneYBas y1 y2)
+    && (estUneLigneDiagonale x1 x2 y1 y2) 
+
+supprimerElement :: Eq a => a -> [a] -> [a]
+supprimerElement _ [] = []  -- Si la liste est vide, il n'y a rien à supprimer
+supprimerElement element (x:xs)
+    | element == x = supprimerElement element xs  -- Si l'élément est égal à la tête de la liste, on le saute
+    | otherwise = x : supprimerElement element xs 
+    
+
+estUneLigneXDroite :: Int -> Int -> Bool
+estUneLigneXDroite x1 x2 = x1 + 1 == x2
+
+estUneLigneYDroite :: Int -> Int -> Bool
+estUneLigneYDroite y1 y2 = y2 == y1
+
+estUneLigneXBas :: Int -> Int -> Bool
+estUneLigneXBas x1 x2 = x1 == x2
+
+estUneLigneYBas :: Int -> Int -> Bool
+estUneLigneYBas y1 y2 = y1 + 1 == y2
+
+estUneLigneDiagonale :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDiagonale x1 x2 y1 y2 = x1 + 1 == x2 && y1 + 1 == y2
+
+ajouteValeurInListe :: [Int] -> Int -> [Int]
+ajouteValeurInListe liste nb = nb : liste
+
+sontSurLaMemeLigne :: Int -> Int -> Bool
+sontSurLaMemeLigne y1 y2 = y1 == y2
+
+ajouteElementALaFin :: [Int] -> Int -> [Int]
+ajouteElementALaFin liste nb = liste ++ [nb]
+
+
+
+estUneLigneDe4 :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDe4 x1 y1 x4 y4 = estUneLigneDe4Droite x1 y1 x4 y4 || estUneLigneDe4Bas x1 y1 x4 y4 || estUneLigneDe4Diag x1 y1 x4 y4
+
+estUneLigneDe4Droite :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDe4Droite x1 y1 x4 y4 = x4 - x1 == 3 && y4 - y1 == 0
+
+estUneLigneDe4Bas :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDe4Bas x1 y1 x4 y4 = x4 - x1 == 0 && y4 - y1 == 3
+
+estUneLigneDe4Diag :: Int -> Int -> Int -> Int -> Bool
+estUneLigneDe4Diag x1 y1 x4 y4 = x4 - x1 == 3 && y4 - y1 == 3
+
+
+--existeUnAlignementde4Pieces :: [Int] -> [Int] = do
+
+
+
+enleverPiecesNonALign4 :: [Int]
+
+
+existeAlign4 :: [Int] -> [Int] -> Bool
+existeAlign4 (x1:y1:xs) listeComplete = do
+    let listeAlign4 = chercherAlignement4Pieces [x1,y1] listeComplete [] 0
+    let existe = False
+    
+    
+    if length listeAlign4 /= 6 && length xs /= 0
+        then do
+            
+    
+    
+    if length listeAlign4 == 6
+        then True
+    else do 
+        if length xs == 0
+            then do 
+                if length listeAlign4 == 6
+                    then True
+                else False
+        else existeAlign4 xs listeComplete
+
+
+    
+chercherAlignement4Pieces :: [Int] -> [Int] -> [Int] -> Int -> [Int]
+chercherAlignement4Pieces listexy listeComplete listeAlign4 i = do
+    let x1 = listexy !! 0
+        y1 = listexy !! 1
+        
+    if i < length listeComplete && (i + 1) < length listeComplete
+        then do
+            let x2 = listeComplete !! i 
+                y2 = listeComplete !! (i + 1)
+                
+            if length listeAlign4 == 0
+                then do
+                    if estUneLigne x1 y1 x2 y2
+                        then do
+                            let newListeAlign4 = ajouteElementALaFin listeAlign4 x2
+                                update = ajouteElementALaFin newListeAlign4 y2
+                            chercherAlignement4Pieces listexy listeComplete update (i + 2)
+                    else chercherAlignement4Pieces listexy listeComplete listeAlign4 (i + 2)
+            else if length listeAlign4 == 2
+                then do
+                    let x = listeAlign4 !! 0
+                        y = listeAlign4 !! 1
+                    if estUneLigne x y x2 y2 && estUneLigneComplete x1 y1 x2 y2
+                        then do
+                            let newListeAlign4 = ajouteElementALaFin listeAlign4 x2
+                                update = ajouteElementALaFin newListeAlign4 y2
+                            chercherAlignement4Pieces listexy listeComplete update (i + 2)
+                    else chercherAlignement4Pieces listexy listeComplete listeAlign4 (i + 2)
+            else if length listeAlign4 == 4
+                then do
+                    let x = listeAlign4 !! 0
+                        y = listeAlign4 !! 1  
+                        x3 = listeAlign4 !! 2
+                        y3 = listeAlign4 !! 3
+                    if estUneLigne x3 y3 x2 y2 && estUneLigneComplete x y x2 y2 && estUneLigneDe4 x1 y1 x2 y2
+                        then do
+                            let newListeAlign4 = ajouteElementALaFin listeAlign4 x2
+                                update = ajouteElementALaFin newListeAlign4 y2
+                            chercherAlignement4Pieces listexy listeComplete update (i + 2)
+                    else chercherAlignement4Pieces listexy listeComplete listeAlign4 (i + 2)
+            else listeAlign4
+    else listeAlign4
+                        
+            
+                 
+        
+
+main = do
+    putStrLn "Hello World"
+    
+    let test1 = [0,0,1,0,2,0,0,1,1,1,1,2,2,2,0,3,3,3]
+    let res = chercherAlignement4Pieces [0,0] test1 [] 0
+    print res
+    print (res !! 0)
+    --let r = estUneLigne 0 0 1 1
+    --let r = estUneLigneDe4 0 0 2 5
+    --print r
+    
+    let l = existeAlign4 test1 test1 
+    print l
+    
+    let liste = [1, 2, 3, 4, 5]
+    let nouvelListe = supprimerElement 3 liste
+    print nouvelListe
+    
+    
+    
+    
+    
+    
