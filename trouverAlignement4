@@ -51,7 +51,6 @@ ajouteElementALaFin :: [Int] -> Int -> [Int]
 ajouteElementALaFin liste nb = liste ++ [nb]
 
 
-
 estUneLigneDe4 :: Int -> Int -> Int -> Int -> Bool
 estUneLigneDe4 x1 y1 x4 y4 = estUneLigneDe4Droite x1 y1 x4 y4 || estUneLigneDe4Bas x1 y1 x4 y4 || estUneLigneDe4Diag x1 y1 x4 y4
 
@@ -65,36 +64,71 @@ estUneLigneDe4Diag :: Int -> Int -> Int -> Int -> Bool
 estUneLigneDe4Diag x1 y1 x4 y4 = x4 - x1 == 3 && y4 - y1 == 3
 
 
+
+supprimerElementALaPosition :: Int -> [a] -> [a]
+supprimerElementALaPosition _ [] = []
+supprimerElementALaPosition 0 (_:xs) = xs
+supprimerElementALaPosition n (x:xs)
+    | n < 0 = x:xs  -- Si la position est négative, la liste reste inchangée
+    | otherwise = x : supprimerElementALaPosition (n - 1) xs
+
+
+
 --existeUnAlignementde4Pieces :: [Int] -> [Int] = do
 
+{--
 
-
-enleverPiecesNonALign4 :: [Int]
-
-
-existeAlign4 :: [Int] -> [Int] -> Bool
-existeAlign4 (x1:y1:xs) listeComplete = do
-    let listeAlign4 = chercherAlignement4Pieces [x1,y1] listeComplete [] 0
-    let existe = False
+estLeJoueurGagnant :: [Int] -> Int -> Bool 
+estLeJoueurGagnant listeComplete i = do
     
-    
-    if length listeAlign4 /= 6 && length xs /= 0
+    if i < length listeComplete && (i + 1) < length listeComplete
         then do
+            let x = listeComplete !! i
+                y = listeComplete !! (i + 1)
+                listeAlign4 = existeAlign4 [x,y] listeComplete 0
+        
+            if length listeAlign4 == 6
+                then True
+            else estLeJoueurGagnant listeComplete (i + 2)
+    else False
+        
+   --} 
+
             
+
+{--
+existeAlign4 :: [Int] -> [Int] -> [Int]
+existeAlign4 (x1:y1:xs) listeComplete = do
+
+    let listeTrouve = chercherAlignement4Pieces listexy listeComplete listeAlign4 0
     
-    
-    if length listeAlign4 == 6
-        then True
-    else do 
-        if length xs == 0
-            then do 
-                if length listeAlign4 == 6
-                    then True
-                else False
-        else existeAlign4 xs listeComplete
+    if length listeTrouve == 6
+        then listeTrouve
+    else do
+        if length listeTrouve /= 0
+        else []
+        --enleverElementsInutiles et refaire l'operation avec la new liste complete
+  --}  
 
 
+
+--renvoie la nouvelle liste complete 
+enleverElementsInutiles :: [Int] -> [Int] -> Int -> Int -> [Int]
+enleverElementsInutiles listePosXY listeComplete i decalage = do
+
+    if i < length listePosXY
+        then do 
+            let position = (listePosXY !! i) - decalage
+                element = (listeComplete !! position)
+                newListeComplete = supprimerElementALaPosition position listeComplete
+            enleverElementsInutiles listePosXY newListeComplete (i + 1) (decalage + 1)
+    else listeComplete
     
+                  
+          
+                    
+
+    {--
 chercherAlignement4Pieces :: [Int] -> [Int] -> [Int] -> Int -> [Int]
 chercherAlignement4Pieces listexy listeComplete listeAlign4 i = do
     let x1 = listexy !! 0
@@ -138,27 +172,47 @@ chercherAlignement4Pieces listexy listeComplete listeAlign4 i = do
             else listeAlign4
     else listeAlign4
                         
-            
-                 
+     --}       
         
 
 main = do
     putStrLn "Hello World"
     
+    
     let test1 = [0,0,1,0,2,0,0,1,1,1,1,2,2,2,0,3,3,3]
-    let res = chercherAlignement4Pieces [0,0] test1 [] 0
-    print res
-    print (res !! 0)
+    
+    --let res = chercherAlignement4Pieces [0,0] test1 [] 0
+    ---print res
+    ---print (res !! 0)
     --let r = estUneLigne 0 0 1 1
     --let r = estUneLigneDe4 0 0 2 5
     --print r
     
-    let l = existeAlign4 test1 test1 
-    print l
+    --let l = existeAlign4 test1 test1 
+    --print l
+
+    --let liste = [1, 2, 3, 4, 5]
+    --let nouvelListe = supprimerElement 3 liste
+    --print nouvelListe
     
-    let liste = [1, 2, 3, 4, 5]
-    let nouvelListe = supprimerElement 3 liste
-    print nouvelListe
+
+    --listeAlign4 listeComplete i j
+    --let liste1 = enleverElementsInutiles [1,1,2,2] test1 0 0
+    --print liste1
+    
+    
+    let maListe = [1,1,2,3,4,5,2,3]
+    --let nouvelleListe = supprimerElementALaPosition 6 maListe  -- Supprimer l'élément à la position 2 (3ème élément)
+    --print nouvelleListe  -- Résultat : [1, 2, 4, 5]
+    
+    let n = enleverElementsInutiles [0,1,6,7] maListe 0 0
+    print n
+
+
+    
+    --enleverElementsInutiles1 [1,1,2,2] test1 0 0
+    
+    
     
     
     
