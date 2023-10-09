@@ -89,25 +89,19 @@ creerListeCoordPieces jeu pieceJr pieceCom i j = do
             if j < length jeu
                 then do
                     let casee = jeu !! i !! j
-                        casseConverti = show casee
-                        
-                    if casseConverti /= "__"
+            
+                    if casee == "X3" || casee == "X2" || casee == "X1" || casee == "X0"
+                        then do
+                            let newPieceJr = ajouteElementALaFin pieceJr i
+                                newUpdate = ajouteElementALaFin newPieceJr j
+                            creerListeCoordPieces jeu newUpdate pieceCom i (j + 1)
+                    else if casee == "O3" || casee == "O2" || casee == "O1" || casee == "O0"
                         then do 
-                            if casseConverti `elem` pieceJoueur
-                            then do
-                                let newPieceJr = ajouteElementALaFin pieceJr i
-                                    newUpdate = ajouteElementALaFin newPieceJr j
-                                creerListeCoordPieces jeu newUpdate pieceCom i (j + 1)
-                            else if casseConverti `elem` pieceOrdi
-                                then do 
-                                    let newPieceCom = ajouteElementALaFin pieceCom i
-                                        newUpdate = ajouteElementALaFin newPieceCom j
-                                    creerListeCoordPieces jeu pieceJr newUpdate i (j + 1)
-                            else 
-                                creerListeCoordPieces jeu pieceJr pieceCom i (j + 1)
+                            let newPieceCom = ajouteElementALaFin pieceCom i
+                                newUpdate = ajouteElementALaFin newPieceCom j
+                            creerListeCoordPieces jeu pieceJr newUpdate i (j + 1)
                     else creerListeCoordPieces jeu pieceJr pieceCom i (j + 1)
-                    
-            else creerListeCoordPieces jeu pieceJr pieceCom (i + 1) j
+            else creerListeCoordPieces jeu pieceJr pieceCom (i + 1) 0
     else ListeCoord pieceJr pieceCom
     
     
@@ -304,11 +298,12 @@ main = do
     let re = estLeJoueurGagnant test1 0
     print re
     
-    --let (ListeCoord posPieceJr posPieceOrdi) = creerListeCoordPieces jeu [] [] 0 0
-    --print posPieceJr
-    --print posPieceOrdi
+    let (ListeCoord posPieceJr posPieceOrdi) = creerListeCoordPieces jeu [] [] 0 0
+    print posPieceJr
+    print posPieceOrdi
+    --pour passer ces coord inverser les cases, genre ds la case cest 03 mais on va passer 30
     
-    creerListeCoordPieces jeu [] [] 0 0
+    --creerListeCoordPieces jeu [] [] 0 0
     
     --enleverElementsInutiles1 [1,1,2,2] test1 0 0
     
