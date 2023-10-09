@@ -1,6 +1,12 @@
 Tâches:
   -Pour l'instant ,la fonction onboard est faite aec succes, elle va déplacer la piece d'une position à une autre et mettre un "-" à la position x1 y1. Mais eventuellement il faudra que ca laisse l'ancienne piece présente
-  s'il y avait une piece en dessous ou sinon remettre le "-"
+  s'il y avait une piece en dessous ou sinon remettre le "-" DONE
 
   -Faire la fonction drop DONE
-  -Fais la fonction qui va répartir la liste de coordoonées du joueur et du com
+  -Fais la fonction qui va répartir la liste de coordoonées du joueur et du com DONE
+
+  ---quand je modifie une case du jr adversaire, je dois modif la pile des pieces en ajoutant la piece avec sa taille
+  ---on se rappelle, je dois faire une liste de liste contenant pour chacune un dictionnaire avec pour chaque case, sa cle qui est
+  ---la taille et SA VALEUR QUI EST LA PIECE 
+
+  
