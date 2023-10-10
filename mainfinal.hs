@@ -133,7 +133,34 @@ chercheLeTriplet listexy listeComplete = do
 joueSurUneCaseAdverse :: [[String]] -> String -> Int -> Int -> [[String]]
 joueSurUneCaseAdverse jeu piece x y = modifierCase2D jeu piece x y
     
+
+estUnePieceTailleInf :: String -> String -> Bool
+estUnePieceTailleInf taillePieceAdd taillePieceDsJeu = taillePieceAdd < taillePieceDsJeu
+
+
+renvoieListeJrAdverse :: Int -> [Int] -> [Int] -> [Int]
+renvoieListeJrAdverse i listeCoordJr0 listeCoordJr1 = do 
+    if i == 0
+        then listeCoordJr1
+    else listeCoordJr0
+
+
+verifieJaiPasPerdu listeCoordJr1 listeCoordJr2 liste2DAvecDictionnaire x y i = do
+    let listeAdversaire = renvoieListeJrAdverse i listeCoordJr0 listeCoordJr1
     
+    let caseValue = recupereValeurTeteDictio x y updatedBigList2D1
+    
+    case caseValue of
+      Just value -> do 
+        putStrLn $ "Valeur du premier élément dans la case (3, 3) : " ++ value
+        --let new = modifierCase2D jeu value 3 3
+        --print new
+      Nothing -> putStrLn "Case invalide ou dictionnaire vide."
+    
+    --let pieceEtListDictio = removeKeyValueAtPosition 3 3 "B" updatedBigList2D2
+
+
+
     
 main :: IO ()
 main = do
@@ -143,6 +170,9 @@ main = do
   
     depart <- lectureActionPlayer
     putStrLn $ "Vous avez entré : " ++ depart
+    
+    --let taillePieceAdd 
+    --let piece = 
     
     let listeMovRest1 = [listeBUser,listeMUser,listeSUser,listeTUser]
     let listeMovRest2 = [listeBComp,listeMComp,listeSComp,listeTComp]
@@ -231,6 +261,46 @@ main = do
     let updatedBigList2D2 = addToDictionaryIn2DList 3 3 "B" "X3" updatedBigList2D1
     printList2DDictio updatedBigList2D2
     
+    
+    
+    -- Exemple d'utilisation : retirer la clé "B" du dictionnaire dans la case (3, 3)
+    let pieceEtListDictio = removeKeyValueAtPosition 3 3 "B" updatedBigList2D2
+    
+    case pieceEtListDictio of
+      Just ((cleEnlevee, valeurEnlevee), updatedList) -> do
+        putStrLn $ "Clé retirée : " ++ cleEnlevee ++ ", Valeur retirée : " ++ valeurEnlevee
+        putStrLn "Liste 2D mise à jour :"
+        printList2DDictio updatedList
+        let updatedBigList2D3 = addToDictionaryIn2DList 2 3 cleEnlevee valeurEnlevee updatedList
+        printList2DDictio updatedBigList2D3
+        
+        let estDictionnaireVide = tailleDictionnaire 3 3 updatedBigList2D3 0
+
+        -- Afficher le résultat
+        if estDictionnaireVide
+          then do 
+            putStrLn "La taille du dictionnaire dans la case (3, 3) est vide."
+            ---remets "__" à la case apropriée
+            --let new = modifierCase2D jeu "__" 3 3
+            --print new
+          else do
+            ---recupere la valeur de cette piece a la case 0 , place-là à cette position ds le jeu et retourne le nouveau jeu
+            putStrLn "La taille du dictionnaire dans la case (1, 2) n'est pas vide ."
+            
+            -- Exemple d'utilisation : récupérer la valeur du premier élément du dictionnaire dans la case (1, 2)
+            let caseValue = recupereValeurTeteDictio 3 3 updatedBigList2D1
+
+            -- Afficher le résultat
+            case caseValue of
+              Just value -> do 
+                putStrLn $ "Valeur du premier élément dans la case (3, 3) : " ++ value
+                --let new = modifierCase2D jeu value 3 3
+                --print new
+              Nothing -> putStrLn "Case invalide ou dictionnaire vide."
+
+      Nothing ->
+        putStrLn "La clé n'a pas été trouvée dans la case spécifiée ou la case est invalide."
+    
     --addToDictionaryIn2DList 1 2 "B" "X3" liste2DAvecDictionnaire
     
     ---quand je modifie une case du jr adversaire, je dois modif la pile des pieces en ajoutant la piece avec sa taille
@@ -246,6 +316,43 @@ main = do
         -- drop1 sur une de ces cases du triplet
     
     ------------------------------------------------------------------------------------
+    
+    
+    --gober une piece (mienne ou adverse)
+    ---verifie la taille
+    --taillePieceAdd est la piece en input
+    --taillePieceDsJeu est la piece ds list2dDictio 
+    --recupere la taille de la piece a cette pos 
+    --let taillePieceDsJeu = recupererCleTeteDictio x y liste2DAvecDictionnaire
+    --let estPieceGobable = estUnePieceTailleInf taillePieceAdd taillePieceDsJeu
+    --print pieceGobable
+    --if estPieceGobable 
+    --    then do 
+            --ajoute ds liste2DAvecDictionnaire
+            --let newListe2DDictio = addToDictionaryIn2DList x y taillePieceAdd piece liste2DAvecDictionnaire
+            --modif case jeu 
+            --let jeu2 = modifierCase2D jeu piece x y
+            --retourne newListe2DDictio et jeu2 
+    --else que faire?
+    
+    
+    --soulever ta piece? == retirer piece , il devra plus pouvoir la replacer a cette case avec onboard
+    --ya piece en dessous? taille liste2DAvecDictionnaire == 1
+    --si oui, utilise la fonction estLeJoueurGagnant listeComplete i
+        ---si oui , utilise la fonction gober une piece , s'il peut pas, game over 
+        --sinon deplace la piece sur retirer ou tu veux 
+    --=>fonction verifieJaiPasPerdu listeComplete liste2DAvecDictionnaire x y 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
