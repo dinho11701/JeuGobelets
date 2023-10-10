@@ -145,17 +145,40 @@ renvoieListeJrAdverse i listeCoordJr0 listeCoordJr1 = do
     else listeCoordJr0
 
 
+estTaPiece :: String -> String -> Bool
+estTaPiece (x:xs) (y:ys) = x == y
+
+
+--estUnOrdi :: 
+
+placeTemporairementPieceJeu :: [[String]] -> String -> Int -> Int -> [[String]] 
+placeTemporairementPieceJeu jeu pieceEnDessous x y = modifierCase2D jeu pieceEnDessous x y 
+
+
 verifieJaiPasPerdu listeCoordJr1 listeCoordJr2 liste2DAvecDictionnaire x y i = do
     let listeAdversaire = renvoieListeJrAdverse i listeCoordJr0 listeCoordJr1
     
-    let caseValue = recupereValeurTeteDictio x y updatedBigList2D1
     
-    case caseValue of
-      Just value -> do 
-        putStrLn $ "Valeur du premier élément dans la case (3, 3) : " ++ value
-        --let new = modifierCase2D jeu value 3 3
-        --print new
-      Nothing -> putStrLn "Case invalide ou dictionnaire vide."
+    
+    --let caseValue = recupereValeurTeteDictio x y liste2DAvecDictionnaire
+
+    
+    let cle = recupererCleTeteDictio x y liste2DAvecDictionnaire
+    let pieceEtListDictio = removeKeyValueAtPosition x y cle liste2DAvecDictionnaire
+
+    case pieceEtListDictio of
+        Just ((cleEnlevee, valeurEnlevee), updatedList) -> do
+        
+            let caseValueDessous = recupereValeurTeteDictio x y updatedList
+            
+            let resultat = estTaPiece valeurEnlevee caseValueDessous
+            
+            if resultat
+            
+            else do
+                let placeTemporairementPieceJeu jeu caseValueDessous x y
+            
+        _        -> ()
     
     --let pieceEtListDictio = removeKeyValueAtPosition 3 3 "B" updatedBigList2D2
 
