@@ -293,18 +293,77 @@ addToDictionaryIn2DList row col key value myList =
  
 printList2DDictio :: [[DictionnairePiece]] -> IO ()
 printList2DDictio myList =
-  mapM_ printRowWithLabel (zip [0..] myList)
-  where
-    printRowWithLabel (rowIdx, row) = do
-      putStrLn $ "Case " ++ show rowIdx ++ ":"
-      mapM_ printDictionaryWithLabel row
-      putStrLn ""  -- Ajoute une ligne vide entre les lignes
+    mapM_ printRowWithLabel (zip [0..] myList)
+    where
+        printRowWithLabel (rowIdx, row) = do
+          putStrLn $ "Case " ++ show rowIdx ++ ":"
+          mapM_ printDictionaryWithLabel row
+          putStrLn ""  -- Ajoute une ligne vide entre les lignes
+        
+        printDictionaryWithLabel dictList = do
+          putStrLn "  Dictionnaire :"
+          mapM_ printKeyValue dictList
+        
+        printKeyValue (key, value) = putStrLn $ "    " ++ key ++ ": " ++ value
 
-    printDictionaryWithLabel dictList = do
-      putStrLn "  Dictionnaire :"
-      mapM_ printKeyValue dictList
+-- Fonction pour déterminer la taille d'un dictionnaire dans une case 2D
+dictionarySizeIn2DList :: Int -> Int -> [[DictionnairePiece]] -> Maybe Int
+dictionarySizeIn2DList row col myList =
+  if row >= 0 && col >= 0 && row < length myList && col < length (myList !! row)
+    then Just (length (myList !! row !! col))
+    else Nothing
 
-    printKeyValue (key, value) = putStrLn $ "    " ++ key ++ ": " ++ value
 
- 
- 
+-- Comparer la taille du dictionnaire dans une case spécifique à une valeur donnée
+tailleDictionnaire :: Int -> Int -> [[DictionnairePiece]] -> Int -> Bool
+tailleDictionnaire row col myList taille1 =
+  case dictionarySizeIn2DList row col myList of
+    Just taille -> taille == taille1
+    Nothing   -> False
+    
+
+
+
+-- Fonction pour retirer une clé-valeur à une certaine position d'un dictionnaire
+-- et renvoyer cette clé-valeur ainsi que le dictionnaire modifié
+removeKeyValueAtPosition :: Int -> Int -> String -> [[DictionnairePiece]] -> Maybe ((String, String), [[DictionnairePiece]])
+removeKeyValueAtPosition row col key myList
+  | row < 0 || col < 0 || row >= length myList || col >= length (myList !! row) = Nothing
+  | otherwise =
+    let currentDict = myList !! row !! col
+        (removedPair, updatedDict) = removePairByKey key currentDict
+        updatedRow = take row myList ++ [take col (myList !! row) ++ [updatedDict] ++ drop (col + 1) (myList !! row)] ++ drop (row + 1) myList
+    in Just (removedPair, updatedRow)
+    
+
+-- Fonction pour retirer une paire (clé, valeur) d'une liste de paires par clé
+removePairByKey :: String -> DictionnairePiece -> ((String, String), DictionnairePiece)
+removePairByKey key dictList =
+    case span (\(k, _) -> k /= key) dictList of
+    (before, (_, value):after) -> ((key, value), before ++ after)
+    _ -> ((key, ""), dictList)  -- Clé non trouvée
+
+
+-- Fonction pour récupérer la valeur du premier élément du dictionnaire dans une case 2D
+recupereValeurTeteDictio :: Int -> Int -> [[DictionnairePiece]] -> Maybe String
+recupereValeurTeteDictio row col myList
+  | row < 0 || col < 0 || row >= length myList || col >= length (myList !! row) = Nothing
+  | otherwise =
+    case myList !! row !! col of
+      (key, value):_ -> Just value
+      _              -> Nothing
+      
+
+-- Fonction pour récupérer la clé du premier élément du dictionnaire dans une case 2D
+recupererCleTeteDictio :: Int -> Int -> [[DictionnairePiece]] -> Maybe String
+recupererCleTeteDictio row col myList
+  | row < 0 || col < 0 || row >= length myList || col >= length (myList !! row) = Nothing
+  | otherwise =
+    case myList !! row !! col of
+      (key, _):_ -> Just key
+      _          -> Nothing
+      
+
+
+
+
