@@ -1,81 +1,79 @@
+module Move where
+
 import Text.Parsec
 import Text.Parsec.String
-import Data.Either (rights)
 
 data Size = T | S | M | B deriving Show
 data Position = Position Int Int deriving Show
 data Move = Drop Size Position | Onboard Position Position deriving Show
 
-lexeme :: Parser a -> Parser a
-lexeme p = p <* spaces
-
-parseSize :: Parser Size
-parseSize = choice
-    [ T <$ string "T"
-    , S <$ string "S"
-    , M <$ string "M"
-    , B <$ string "B"
+-- Analyseur pour les tailles
+sizeParser :: Parser Size
+sizeParser = choice
+    [ T <$ char 'T'
+    , S <$ char 'S'
+    , M <$ char 'M'
+    , B <$ char 'B'
     ]
 
-parsePosition :: Parser Position
-parsePosition = do
-    _ <- char '('
-    x <- many digit
-    _ <- char ','
-    y <- many digit
-    _ <- char ')'
-    return $ Position (read x) (read y)
+-- Analyseur pour les positions
+positionParser :: Parser Position
+positionParser = do
+    char '('
+    x <- digit
+    char ','
+    spaces
+    y <- digit
+    char ')'
+    return $ Position (read [x]) (read [y])
 
-parseMove :: Parser Move
-parseMove = try parseDrop <|> parseOnboard
+-- Analyseur pour les mouvements "onboard"
+{--onboardParser :: Parser Move
+onboardParser = do
+    string "onboard"
+    spaces
+    position1 <- positionParser
+    spaces
+    string "to"
+    spaces
+    position2 <- positionParser
+    return (Onboard position1 position2)
+--}
 
-parseDrop :: Parser Move
-parseDrop = do
-    _ <- string "drop"
-    size <- lexeme parseSize
-    pos <- lexeme parsePosition
-    return (Drop size pos)
 
-parseOnboard :: Parser Move
-parseOnboard = do
-    _ <- string "onboard"
-    fromPos <- lexeme parsePosition
-    _ <- string "to"
-    toPos <- lexeme parsePosition
-    return (Onboard fromPos toPos)
-    
-printParsedMove :: Move -> IO ()
-printParsedMove (Drop size position) = do
-    putStrLn "Drop :"
-    putStrLn $ "Taille : " ++ show size
-    putStrLn $ "Position en X : " ++ show (getX position)
-    putStrLn $ "Position en Y : " ++ show (getY position)
+--onboard((0, 2), (2, 1))
 
-printParsedMove (Onboard fromPos toPos) = do
-    putStrLn "Onboard :"
-    putStrLn $ "De la position : " ++ showPosition fromPos
-    putStrLn $ "À la position : " ++ showPosition toPos
 
-getX :: Position -> Int
-getX (Position x _) = x
 
-getY :: Position -> Int
-getY (Position _ y) = y
+--drop(B, (0, 1))
+dropParser :: Parser Move
+dropParser = do
+    string "drop"
+    char '('
+    size <- sizeParser
+    char ','
+    optional spaces  -- Rend l'espace optionnel
+    position <- positionParser
+    char ')'
+    return (Drop size position)
 
-showPosition :: Position -> String
-showPosition (Position x y) = "(" ++ show x ++ ", " ++ show y ++ ")"
 
-main :: IO ()
-main = do
-    let moves = ["drop B (0, 1)", "onboard (0, 2) (2, 1)"]
-    let parsedMoves = map (parse parseMove "") moves
 
-    case sequence parsedMoves of
-        Left err -> putStrLn $ "Erreur d'analyse : " ++ show err
-        Right movesList -> do
-            putStrLn "Mouvements parsés avec succès :"
-            
-            
-            
-    
-            mapM_ printParsedMove movesList
+onboardParser :: Parser Move
+onboardParser = do
+    string "onboard"
+    char '('
+    position1 <- positionParser
+    char ','
+    optional spaces  -- Rend l'espace optionnel
+    position2 <- positionParser
+    char ')'
+    return (Onboard position1 position2)
+
+
+
+
+-- Analyseur pour les mouvements
+parseMoves :: Parser Move
+parseMoves = try onboardParser <|> dropParser
+
