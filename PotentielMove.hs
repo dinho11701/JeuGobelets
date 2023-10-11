@@ -77,3 +77,16 @@ onboardParser = do
 parseMoves :: Parser Move
 parseMoves = try onboardParser <|> dropParser
 
+
+import Move
+import Text.Parsec
+
+main :: IO ()
+main = do
+  --let moves = ["onboard((0,2), (2,1))"]
+  let moves = ["drop(B, (0, 1))"] 
+
+  case runParser parseMoves () "input" (unlines moves) of
+    Right result -> print result
+    Left err -> print err
+
