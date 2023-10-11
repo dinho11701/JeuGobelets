@@ -28,65 +28,32 @@ positionParser = do
     return $ Position (read [x]) (read [y])
 
 -- Analyseur pour les mouvements "onboard"
-{--onboardParser :: Parser Move
-onboardParser = do
-    string "onboard"
-    spaces
-    position1 <- positionParser
-    spaces
-    string "to"
-    spaces
-    position2 <- positionParser
-    return (Onboard position1 position2)
---}
-
-
---onboard((0, 2), (2, 1))
-
-
-
---drop(B, (0, 1))
-dropParser :: Parser Move
-dropParser = do
-    string "drop"
-    char '('
-    size <- sizeParser
-    char ','
-    optional spaces  -- Rend l'espace optionnel
-    position <- positionParser
-    char ')'
-    return (Drop size position)
-
-
-
 onboardParser :: Parser Move
 onboardParser = do
     string "onboard"
     char '('
     position1 <- positionParser
     char ','
-    optional spaces  -- Rend l'espace optionnel
+    spaces
     position2 <- positionParser
     char ')'
     return (Onboard position1 position2)
 
-
-
+-- Analyseur pour les mouvements "drop"
+dropParser :: Parser Move
+dropParser = do
+    string "drop"
+    char '('
+    size <- sizeParser
+    char ','
+    spaces
+    position <- positionParser
+    char ')'
+    return (Drop size position)
 
 -- Analyseur pour les mouvements
-parseMoves :: Parser Move
-parseMoves = try onboardParser <|> dropParser
-
-
-import Move
-import Text.Parsec
-
-main :: IO ()
-main = do
-  --let moves = ["onboard((0,2), (2,1))"]
-  let moves = ["drop(B, (0, 1))"] 
-
-  case runParser parseMoves () "input" (unlines moves) of
-    Right result -> print result
-    Left err -> print err
-
+parseMoves :: [String] -> [Move]
+parseMoves input = 
+  case parse (many (try onboardParser <|> dropParser)) "" (unlines input) of
+    Right moves -> moves
+    Left _ -> []
